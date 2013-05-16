@@ -1,16 +1,11 @@
 package client;
 
-
-
-
-
 /**
  * The main class wich only use is to start a new game. 
  * @author Hugo Nissar
- * @author Jonas Sjï¿½berg
+ * @author Jonas Sjöberg
  * @version 1.0
  */
-
 @SuppressWarnings("serial")
 public class Tetris extends Frame{
 	private ReadConfig readConfig = new ReadConfig();
@@ -27,6 +22,9 @@ public class Tetris extends Frame{
 
 	private Panel panel = new Panel(background);
 
+	/**
+	 * Initialize variables.
+	 */
 	public Tetris() {
 		wl = new WindowListener(this);
 		menu = new Menu(this);
@@ -46,14 +44,13 @@ public class Tetris extends Frame{
 		return ip;
 	}
 
-	public static void main(String [] arg) {
-		new Tetris();
-	}
-
 	public SpectatePanel getSP() {
 		return sp;
 	}
 
+	/**
+	 * Clears the screen and sets up the playing field.
+	 */
 	public void startGame() {
 		panel.removeAll();	
 		pp = new PlayingPanel();
@@ -74,5 +71,9 @@ public class Tetris extends Frame{
 	
 	public Client getClient() {
 		return client;
+	}
+	
+	public static void main(String [] arg) {
+		new Tetris();
 	}
 }

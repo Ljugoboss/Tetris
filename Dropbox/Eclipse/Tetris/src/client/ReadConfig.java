@@ -2,9 +2,10 @@ package client;
 
 import java.io.FileInputStream;
 import java.util.Properties;
+
 /**
- * 
- * @author Jonas Sjï¿½berg
+ * Reads a file which properties can be loaded from.
+ * @author Jonas Sjöberg
  * @version 1.0
  */
 
@@ -13,7 +14,7 @@ public class ReadConfig {
 	Properties configFile;
 	
 	/**
-	 * Tries to load the configFile. 
+	 * Tries to load the configFile.
 	 */
 	public ReadConfig() {
 		configFile = new java.util.Properties();
@@ -26,14 +27,19 @@ public class ReadConfig {
 
 	/**
 	 * Gets the property matching the key.
-	 * @param key
-	 * @return The property matching the key, as a String
+	 * @param key The key to the value.
+	 * @return The property matching the key, as a String.
 	 */
 	public String getProperty(String key) {
 		String value = configFile.getProperty(key);
 		return value;
 	}
 	
+	/**
+	 * Sets a property to a key.
+	 * @param key The key to the value.
+	 * @param value The value to be set to the key.
+	 */
 	public void setProperties(String key, String value) {
 		configFile.setProperty(key, value);
 	}

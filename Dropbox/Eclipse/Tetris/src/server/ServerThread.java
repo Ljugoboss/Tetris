@@ -11,8 +11,10 @@ import javax.swing.Timer;
 
 import server.Shape.Tetrominoes;
 /**
+ * This class listens for commands and tells the Commands class to do what needs to be done.
+ * It also sends the updated array, containing the playing field, to the clients.
  * @author Hugo Nissar
- * @author Jonas Sjï¿½berg
+ * @author Jonas Sjöberg
  * @version 1.0
  *
  */
@@ -28,14 +30,14 @@ public class ServerThread extends Thread implements ActionListener {
 	private byte id;
 
 	/**
-	 * 
-	 * @param ine The IP-address to the client
-	 * @param ds The DatagramSocket the server uses
-	 * @throws Exception
+	 * Create the input and output streams and sends the id and the amount of players to the client.
+	 * @param server The actual server.
+	 * @param id The id of this thread.
+	 * @throws IOException
 	 */
 	public ServerThread (Server server, byte id)  throws IOException {
 
-		timer = new Timer(100, this);
+		timer = new Timer(400, this);
 		this.id = id;
 
 		this.server = server;
@@ -53,7 +55,7 @@ public class ServerThread extends Thread implements ActionListener {
 	}
 
 	/**
-	 * ......
+	 * This thread listens for commands and send the to the Commands class.
 	 */
 	public void run(){
 		System.out.println("new server thread");
@@ -61,13 +63,14 @@ public class ServerThread extends Thread implements ActionListener {
 		serverThreads = server.getServerThreads();
 		c = new Commands(serverThreads, id);
 		timer.start();
+
 		boolean connected = true;
 		System.out.println("Running server Thread");
 		try {
 			/* As long as we receive data, echo that data back to the client. */
 			while (connected) {
-				String command = input.readLine();
-				if(command.equals("dc")) {
+				String command = input.readLine(); // Blocks until it recieves something.
+				if(command.equals("DC")) { // If the client closed.
 					timer.stop();
 					input.close();
 					output.close();
@@ -76,6 +79,7 @@ public class ServerThread extends Thread implements ActionListener {
 					break;
 				}
 				c.doCommand(Integer.parseInt(command));
+				updateRows();
 				sendToAll();
 			}
 		} catch (IOException e) {
@@ -91,6 +95,9 @@ public class ServerThread extends Thread implements ActionListener {
 		return pf;
 	}
 
+	/**
+	 * Send the array to all the cleints.
+	 */
 	public void sendToAll() {
 		byte[] map = createSendArray();
 
@@ -106,19 +113,26 @@ public class ServerThread extends Thread implements ActionListener {
 		}
 	}
 
+	/**
+	 * Create an array containing bytes instead of Shapes. 
+	 * @return An array containing the playing field in bytes and the id of this thread.
+	 */
 	private byte[] createSendArray() {
-		Tetrominoes[] t = pf.getArray().clone();
+		// We need a clone of the original array so we don't ruin it.
+		Tetrominoes[] t = pf.getArray().clone(); 
 		int curX = pf.getCurX();
 		int curY = pf.getCurY();
 		int BoardWidth = pf.getBoardWidth();
 		Shape curPiece = pf.getCurPiece();
 
+		// Add the piece that is in the air to the array.
 		for (int i = 0; i < 4; ++i) {
 			int x = curX + curPiece.x(i);
 			int y = curY - curPiece.y(i);
 			t[(y * BoardWidth) + x] = curPiece.getShape();
 		}
 
+		// Create a new array with the id of the thread and a byte for each shape.
 		byte[] map = new byte[t.length+1];
 		map[0] = id;
 
@@ -158,10 +172,11 @@ public class ServerThread extends Thread implements ActionListener {
 		return map;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void updateRows() {
+		// If any rows are removed since the last update and it's more then one player.
 		if(pf.rowsRemoved() && serverThreads.length > 1) {
 			for(ServerThread st: serverThreads) {
+				// Don't send to me or to someone who lost.
 				if(st != this && !st.getPlayingField().gameOver()) {
 					switch(pf.getNumRowsRemoved()) {
 					case 2:
@@ -179,6 +194,14 @@ public class ServerThread extends Thread implements ActionListener {
 
 			pf.setRowsRemoved(false);
 		}
+	}
+
+	/**
+	 * Send the and update the array for every tick of the timer.
+	 */
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		updateRows();
 		sendToAll();
 	}
 }

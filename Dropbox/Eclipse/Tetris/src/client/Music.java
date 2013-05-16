@@ -13,8 +13,9 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
- * 
- * @author Jonas SjÃ¶berg
+ * Imports a music file, plays it, stops it and restarts it.
+ * @author Hugo Nissar
+ * @author Jonas Sjöberg
  * @version 1.0
  */
 public class Music {
@@ -23,6 +24,10 @@ public class Music {
 	Clip clip;
 	FloatControl volume;
 
+	/**
+	 * Tries to open the file and create a AudioInputStream from it.
+	 * @param filename The name of the file.
+	 */
 	@SuppressWarnings({ "deprecation", "static-access" })
 	public Music(String filename) {
 		File file = new File(filename);
@@ -44,17 +49,26 @@ public class Music {
 			e.printStackTrace();
 		}
 		volume = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-		setVolume(3);
+		setVolume(1);
 	}
 
+	/**
+	 * Start playing the loaded file.
+	 */
 	public void play() {
 		clip.start();
 	}
 
+	/**
+	 * Stops playing the loaded file.
+	 */
 	public void stop() {
 		clip.stop();
 	}
 
+	/**
+	 * Restarts the loaded file.
+	 */
 	public void restart() {
 		clip.stop();
 		clip.start();

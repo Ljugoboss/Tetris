@@ -3,22 +3,31 @@ package client;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-
-public class Input implements KeyListener{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2679329980982816181L;
+/**
+ * Creates a KeyListener that listens for new key presses.
+ * @author Hugo Nissar
+ * @author Jonas Sjöberg
+ *
+ */
+public class Input implements KeyListener {
+	
 	private Client client;
+	
+	/**
+	 * Initialize variables. 
+	 * @param client
+	 */
 	public Input(Client client) {
 		this.client = client;
 	}
+	
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
+	/**
+	 * Makes the client send a command whenever a key is pressed.
+	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
 		client.sendCommand(e.getKeyCode());
@@ -26,11 +35,5 @@ public class Input implements KeyListener{
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 }

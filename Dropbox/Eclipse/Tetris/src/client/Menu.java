@@ -11,6 +11,12 @@ import javax.swing.JPanel;
 
 import server.Server;
 
+/**
+ * Creates the start menu.
+ * @author Hugo Nissar
+ * @author Jonas Sjöberg
+ *
+ */
 @SuppressWarnings("serial")
 public class Menu extends JPanel implements ActionListener {
 	private JButton play;
@@ -24,7 +30,10 @@ public class Menu extends JPanel implements ActionListener {
 	private Server server;
 	private Tetris tetris;
 	
-
+	/**
+	 * Initializes all the variables and sets the attributes we want.
+	 * @param tetris The main class.
+	 */
 	public Menu(Tetris tetris) {
 		this.tetris = tetris;
 		play = new JButton("Play");
@@ -53,11 +62,14 @@ public class Menu extends JPanel implements ActionListener {
 		this.setOpaque(false);
 		this.setVisible(true);
 		updateUI();
-		System.out.println(isOpaque());
 	}
+	
+	/**
+	 * Listens to the buttons.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == play) {
+		if(e.getSource() == play) { // Play button: Clear the screen and sets up the next one.
 			this.removeAll();
 			this.add(textIP);
 			this.add(join);
@@ -69,13 +81,13 @@ public class Menu extends JPanel implements ActionListener {
 			this.add(back);
 			this.add(info);
 			this.updateUI();
-		} else if (e.getSource() == host) {
+		} else if (e.getSource() == host) { // Host button: Clear the screen and sets up the next one.
 			this.removeAll();
 			this.add(textNumPlayers);
 			this.add(ok);
 			this.add(back);
 			this.updateUI();
-		} else if (e.getSource() == ok) {
+		} else if (e.getSource() == ok) { // OK button: Tries to parse the input and start a server. Takes you back to the main screen.
 			try {
 				int i = Integer.parseInt(textNumPlayers.getText());
 				server = new Server(i);
@@ -88,7 +100,7 @@ public class Menu extends JPanel implements ActionListener {
 			this.add(host);
 			this.add(back);
 			this.updateUI();
-		} else if (e.getSource() == join) {
+		} else if (e.getSource() == join) { // Join button: Tries to get an IP-address from the input. Joins a server depending on input.
 			try {
 				String ip = textIP.getText();
 				System.out.println(ip);
@@ -105,7 +117,7 @@ public class Menu extends JPanel implements ActionListener {
 			} catch (Exception ex) {
 				System.out.println("You didn't type a number");
 			}
-		} else if(e.getSource() == help) {
+		} else if(e.getSource() == help) { // Help button: Clear the screen and shows a label with information.
 			removeAll();
 			JLabel info = new JLabel("<html><body>" +
 					"Move Left: Left arrow key" +
@@ -119,8 +131,7 @@ public class Menu extends JPanel implements ActionListener {
 			this.add(info);
 			this.add(back);
 			this.updateUI();
-		}
-		else if(e.getSource() == back) {
+		} else if(e.getSource() == back) { // Back button: Takes you back to the main screen.
 			removeAll();
 			this.add(play);
 			this.add(host);

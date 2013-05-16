@@ -5,24 +5,31 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * 
+ * This class creates a server and listens for clients to connect.
  * @author Hugo Nissar
  * @author Jonas Sjöberg
  * @version 1.0
  *
  */
-public class Server extends Thread{
+public class Server extends Thread {
 	private ServerThread[] serverThreads;
 	private ServerSocket echoServer = null;
 	private Socket clientSocket = null;
 	private byte playersConnected = 0;
 	
+	/**
+	 * Create a new server.
+	 * @param numPlayers The amount of players who will join.
+	 */
 	public Server(int numPlayers) {
 		
 		serverThreads = new ServerThread[numPlayers];
 	}
 	
-	public void run(){
+	/**
+	 * Creates the server and listens for clients.
+	 */
+	public void run() {
 
 		/*
 		 * Open a server socket on port 4444. Note that we can't choose a port less
@@ -42,10 +49,11 @@ public class Server extends Thread{
 		while(true) {
 			try {
 				System.out.println("Waiting for client");
-				clientSocket = echoServer.accept();
+				clientSocket = echoServer.accept(); // Block until a client connects.
 				ServerThread st = new ServerThread(this, playersConnected);
 				serverThreads[playersConnected] = st;
 				playersConnected++;
+				// If everyone is connected, start the threads.
 				if(playersConnected == serverThreads.length){
 					System.out.println("All connected");
 					for(ServerThread s : serverThreads) {

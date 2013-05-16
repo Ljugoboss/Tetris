@@ -8,12 +8,12 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 /**
- * 
+ * This class listens to the server.
  * @author Hugo Nissar
- * @author Jonas SjÃ¶berg
+ * @author Jonas Sjöberg
  * @version 1.0
  */
-public class Client extends Thread{
+public class Client extends Thread {
 	private Socket clientSocket = null;
 	private InputStream is = null;
 	private PrintStream os = null;
@@ -23,7 +23,12 @@ public class Client extends Thread{
 	private int id;
 	private int players;
 
-	public Client(Tetris tetris, Paint paint){
+	/**
+	 * Creates a client and tries to connect to the server.
+	 * @param tetris The main class.
+	 * @param paint The drawing panel.
+	 */
+	public Client(Tetris tetris, Paint paint) {
 		this.paint = paint;
 		/*
 		 * Open a socket on port 2222. Open the input and the output streams.
@@ -45,6 +50,10 @@ public class Client extends Thread{
 		}
 		System.out.println("The client started. Type any text. To quit it type 'Ok'.");
 	}
+	
+	/**
+	 * Listens after a new array and tells the panel to update.
+	 */
 	public void run() {
 		while(true) {
 			byte[] t = readArray();
@@ -62,15 +71,36 @@ public class Client extends Thread{
 		}
 	}
 
+	/**
+	 * Sends a command.
+	 * @param code The number of the command.
+	 */
 	public void sendCommand(int code) {
-		if(os != null)
+		if(os != null) {
 			os.println(code);
+		}
 	}
 	
+	/**
+	 * Disconnects the client from the server.
+	 */
 	public void dc() {
-		if(os != null)
-			os.println("dc");
+		if(os != null) {
+			os.println("DC");
+			os.close();
+			try {
+				is.close();
+				dis.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
+	
+	/**
+	 * Tries to read from the data input stream.
+	 * @return A new byte array if the there's an open input stream, else a new byte array.
+	 */
 	private byte[] readArray() {
 		try {
 			if(is != null) {
@@ -84,10 +114,18 @@ public class Client extends Thread{
 		return new byte[221];
 	}
 
+	/**
+	 * 
+	 * @return The number of players.
+	 */
 	public int getPlayers() {
 		return players;
 	}
 
+	/**
+	 * Sets the SpectatePanel.
+	 * @param sp The SpectatePanel.
+	 */
 	public void setSP(SpectatePanel sp) {
 		this.sp = sp;
 	}

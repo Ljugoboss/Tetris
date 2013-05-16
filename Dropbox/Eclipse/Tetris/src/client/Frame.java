@@ -3,7 +3,7 @@ package client;
 import javax.swing.JFrame;
 
 /**
- * Creates the frame with all the components needed.
+ * Creates the frame with with the settings we want.
  * @author Hugo Nissar
  * @version 1.0
  */
@@ -11,6 +11,9 @@ import javax.swing.JFrame;
 @SuppressWarnings("serial")
 public class Frame extends JFrame{
 
+	/**
+	 * Creates the frame with with the settings we want.
+	 */
 	public Frame() {
 		this.setSize(600,600);
 		this.setResizable(false);

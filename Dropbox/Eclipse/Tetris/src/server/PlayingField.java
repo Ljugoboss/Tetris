@@ -7,13 +7,13 @@ import javax.swing.Timer;
 import server.Shape.Tetrominoes;
 
 /**
+ * This class updates the array containing all the pieces according to the commands.
  * 
  * @author Hugo Nissar
+ * @author Jonas Sjöberg
  * @version 1.0
  */
-
-
-public class PlayingField implements ActionListener{
+public class PlayingField implements ActionListener {
 	protected boolean isFallingFinished = false;
 	private final int BoardWidth = 10;
 	private final int BoardHeight = 22;
@@ -28,6 +28,9 @@ public class PlayingField implements ActionListener{
 	private int numRowsRemoved;
 	private boolean gameOver = false;
 	
+	/**
+	 * Initialize some variables.
+	 */
 	public PlayingField() {
 		board = new Tetrominoes[BoardWidth * BoardHeight];
 		curPiece = new Shape();
@@ -36,12 +39,20 @@ public class PlayingField implements ActionListener{
 		start();
 		clearBoard();
 	}
+	
+	/**
+	 * @param x
+	 * @param y
+	 * @return The shape located at position (x,y)
+	 */
 	Tetrominoes shapeAt(int x, int y) { 		
 		return board[(y * BoardWidth) + x]; 
 	}
 
 	
-
+	/**
+	 * Drop the piece until it reaches the floor.
+	 */
 	protected void dropDown() {
 		int newY = curY;
 		while (newY > 0) {
@@ -53,18 +64,26 @@ public class PlayingField implements ActionListener{
 		pieceDropped();
 	}
 
+	/**
+	 * Move the piece one line down.
+	 */
 	protected void oneLineDown() {
 		if (!tryMove(curPiece, curX, curY - 1)) {
 			pieceDropped();
 		}
 	}
 
-
+	/**
+	 * Clear the entire board from all pieces.
+	 */
 	protected void clearBoard()	{
 		for (int i = 0; i < BoardHeight * BoardWidth; ++i)
 			board[i] = Tetrominoes.NoShape;
 	}
 
+	/**
+	 * If a piece hit the floor, check if its any full lines and create a new piece.
+	 */
 	private void pieceDropped()	{
 		for (int i = 0; i < 4; ++i) {
 			int x = curX + curPiece.x(i);
@@ -78,12 +97,15 @@ public class PlayingField implements ActionListener{
 			newPiece();
 	}
 
+	/**
+	 * Create a new random piece and check if it can move. If it can't move, it's game over.
+	 */
 	protected void newPiece() {
 		curPiece.setRandomShape();
 		curX = BoardWidth / 2 + 1;
 		curY = BoardHeight - 1 + curPiece.minY();
 		
-		//If the new piece can't move down at all, it's game over.
+		// If the new piece can't move down at all, it's game over.
 		if (!tryMove(curPiece, curX, curY)) {
 			curPiece.setShape(Tetrominoes.NoShape);
 			timer.stop();
@@ -93,10 +115,21 @@ public class PlayingField implements ActionListener{
 		}
 	}
 	
+	/**
+	 * 
+	 * @return True if it's game over.
+	 */
 	public boolean gameOver() {
 		return gameOver;
 	}
 
+	/**
+	 * Try to move the piece.
+	 * @param newPiece The current piece.
+	 * @param newX The new x position it will get after moving.'
+	 * @param newY The new Y position it will get after moving.
+	 * @return true if it can move.
+	 */
 	protected boolean tryMove(Shape newPiece, int newX, int newY) {
 		for (int i = 0; i < 4; ++i) {
 			int x = newX + newPiece.x(i);
@@ -114,6 +147,10 @@ public class PlayingField implements ActionListener{
 		return true;
 	}
 	
+	/**
+	 * Add rows to the bottom of the field.
+	 * @param rows the amount of rows to be added.
+	 */
 	public void addRows(int rows) {
 		for(int y = BoardHeight-1; y >= rows; y--) {
 			for(int x = 0; x < BoardWidth; x++) {
@@ -125,8 +162,12 @@ public class PlayingField implements ActionListener{
 		}
 	}
 	
+	/**
+	 * 
+	 * @return true if it removed any rows lately.
+	 */
 	public boolean rowsRemoved() {
-		return rowsRemoved ;
+		return rowsRemoved;
 	}
 	
 	public void setRowsRemoved(boolean b) {
@@ -136,16 +177,24 @@ public class PlayingField implements ActionListener{
 		}
 	}
 	
+	/**
+	 * 
+	 * @return The amount of rows that got removed the last time.
+	 */
 	public int getNumRowsRemoved() {
 		return numRowsRemoved;
 	}
  
+	/**
+	 * If any line is full, remove it and drop down the rest of the pieces above.
+	 */
 	private void removeFullLines() {
 		int numFullLines = 0;
 
 		for (int i = BoardHeight - 1; i >= 0; i--) {
 			boolean lineIsFull = true;
 
+			// Check if a line is full.
 			for (int j = 0; j < BoardWidth; j++) {
 				if (shapeAt(j, i) == Tetrominoes.NoShape || shapeAt(j, i) == Tetrominoes.RowShape) {
 					lineIsFull = false;
@@ -153,6 +202,7 @@ public class PlayingField implements ActionListener{
 				}
 			}
 
+			// Remove the line.
 			if (lineIsFull) {
 				numFullLines++;
 				for (int k = i; k < BoardHeight - 1; k++) {
@@ -163,7 +213,7 @@ public class PlayingField implements ActionListener{
 			
 		}
 		
-
+		// Was any lines removed?
 		if (numFullLines > 0) {
 			setRowsRemoved(true);
 			isFallingFinished = true;
@@ -172,7 +222,9 @@ public class PlayingField implements ActionListener{
 		}
 	}
 
-	
+	/**
+	 * Start the game.
+	 */
 	public void start()	{
 		if (isPaused)
 			return;
@@ -185,6 +237,9 @@ public class PlayingField implements ActionListener{
 		newPiece();
 	}
 
+	/**
+	 * Pause the game.
+	 */
 	protected void pause() {
 		if (!isStarted)
 			return;
@@ -194,16 +249,6 @@ public class PlayingField implements ActionListener{
 			timer.stop();
 		} else {
 			timer.start();
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		if (isFallingFinished) {
-			isFallingFinished = false;
-			newPiece();
-		} else {
-			oneLineDown();		
 		}
 	}
 	
@@ -233,5 +278,18 @@ public class PlayingField implements ActionListener{
 	
 	public void shutDown() {
 		timer.stop();
+	}
+	
+	/**
+	 * Update the field every timer tick.
+	 */
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		if (isFallingFinished) {
+			isFallingFinished = false;
+			newPiece();
+		} else {
+			oneLineDown();		
+		}
 	}
 }
